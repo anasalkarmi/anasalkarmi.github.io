@@ -178,6 +178,12 @@ h1,h2,h3{margin:0;font-weight:800;text-wrap:balance}
 .monitor{position:relative;background:#000;border:1px solid var(--line);border-radius:6px;overflow:hidden;aspect-ratio:16/9;width:min(100%,calc((100svh - var(--nav-h) - 280px) * 16 / 9));justify-self:start}
 .mon-item{position:absolute;inset:0;opacity:0;transition:opacity .18s linear}
 .mon-item.on{opacity:1}
+.mon-item{pointer-events:none}.mon-item.on{pointer-events:auto}
+.mon-item iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+.mon-yt{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;display:inline-flex;align-items:center;gap:10px;border:0;border-radius:999px;padding:12px 22px;background:var(--tungsten);color:var(--ink);font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;box-shadow:0 0 0 8px rgba(255,159,67,.16),0 16px 40px rgba(0,0,0,.5)}
+.mon-yt:hover{transform:translate(-50%,-50%) scale(1.05)}
+.meta .yt-link{display:inline-block;margin-top:14px;font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--tungsten-2);text-decoration:none}
+.meta .yt-link:hover{color:var(--bone)}
 .mon-item video,.mon-item img{width:100%;height:100%;object-fit:cover}
 .mon-item img{transform-origin:var(--ox,50%) var(--oy,50%);transform:scale(var(--s,1.02));will-change:transform}
 .mon-hud{position:absolute;inset:0;pointer-events:none;font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;color:rgba(237,230,218,.9);font-variant-numeric:tabular-nums}
@@ -1317,6 +1323,7 @@ requestAnimationFrame(mqLoop);
 
 /* ---------- THE EDIT ---------- */
 const P=SITE.projects||[
+ {id:'muqabala',t:'Al Muqabala',sub:'with Ali Al-Dhafiri · Slovenian President Nataša Pirc Musar',client:'Al Jazeera',year:'2026',type:'Interview',c:'--lab-studio',role:'Director of Photography',fmt:'Episodes filmed in the UK, France and across Europe',note:'Al Jazeera\'s long-form interview programme with Ali Al-Dhafiri. DoP on episodes filmed in the UK, France and across Europe, including the interview with the President of Slovenia, Nataša Pirc Musar.',img:'https://i.ytimg.com/vi/ATeo7NlZrl8/maxresdefault.jpg',yt:'ATeo7NlZrl8',file:'AL_MUQABALA_SLOVENIA',res:'Al Jazeera · 2026',dur:90},
  {id:'underfire',t:'Under Fire',sub:"Israel's war on medics · documentary trailer",client:'Middle East Eye',year:'2025',type:'Documentary',c:'--lab-doc',role:'Trailer edit · Motion design · Sound',fmt:'16:9 · 4:5 · 9:16',note:'A documentary trailer cut for three platforms from one timeline, with a graphic language of scan lines, frame counters and redacted colour.',v:'m/p_underfire.mp4',file:'UNDER_FIRE_TRL_169.mov',res:'1920×1080 · 25P',dur:68,gfx:'Scan-line GFX'},
  {id:'asli',t:'Asli',sub:'Studio interview series',client:'Arabi21',year:'2025',type:'Studio series',c:'--lab-studio',role:'DoP · Lighting · 3-camera studio',fmt:'Presenter · Guest · Wide · 4K S-Log3',note:'Long-form conversations on a navy set: bouclé armchairs, a warm practical lamp and teal-lit windows behind the guest for separation.',v:'m/p_asli.mp4',file:'ASLI_GUEST_826_0121.MXF',res:'3840×2160 · 25P',dur:88},
  {id:'cookies',t:'Crack Cookies',sub:'Product films for social',client:'Crack Cookies',year:'2025',type:'Commercial',c:'--lab-ad',role:'DoP · Product lighting · Edit',fmt:'Macro · top-down · third angle · 9:16',note:'Colour-blocked product films built for vertical feeds, shot on three angles including macro and a top-down rig.',v:'m/p_cookies.mp4',file:'CRACK_COOKIES_V5_916.mov',res:'1080×1920 · 25P',dur:6},
@@ -1366,8 +1373,11 @@ function drawWave(cv){const w=cv.clientWidth||100,h=16;cv.width=w;cv.height=h;co
 // monitor items
 function buildMon(){monItems.innerHTML='';P.forEach((p,i)=>{const d=document.createElement('div');d.className='mon-item'+(i===0?' on':'');d.dataset.i=i;
   if(p.v){d.innerHTML=`<video muted playsinline loop preload="${i<2?'auto':'none'}" poster="${p.poster||p.v.replace(/\.(mp4|webm)$/,'.jpg')}" src="${p.v}"></video>`}
+  else if(p.yt){monYt(d,p,i)}
   else{d.innerHTML=`<img src="${p.img}" alt="${p.t} frame" loading="${i<2?'eager':'lazy'}">`}
   monItems.appendChild(d)})}
+function monYt(d,p,i){d.innerHTML=`<img src="${p.img}" alt="${escT(p.t)}" loading="${i<2?'eager':'lazy'}"><button type="button" class="mon-yt" aria-label="Play the episode">&#9654; Play episode</button>`;
+  d.querySelector('.mon-yt').addEventListener('click',e=>{e.stopPropagation();d.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(p.yt)}?autoplay=1&rel=0" title="${escT(p.t)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`})}
 buildMon();
 let monEls=$$('.mon-item',monItems);const monTc=$('#monTc'), monName=$('#monName'), monFmt=$('#monFmt'), phTc=$('#phTc');
 let active=-1, editVisible=false, scrubbing=0, lastProg=-1;
@@ -1376,12 +1386,13 @@ function renderMeta(i){const p=P[i];
   meta.innerHTML=`<div class="idx"><span class="lab" style="--c:var(${p.c})"></span>${String(i+1).padStart(2,'0')} / ${String(P.length).padStart(2,'0')} · ${escT(p.type.toUpperCase())}</div>
   <h3>${escT(p.t)}</h3><p class="sub">${escT(p.sub)}</p>
   <dl><dt>Client</dt><dd>${escT(p.client)}</dd><dt>Role</dt><dd>${escT(p.role)}</dd><dt class="opt">Format</dt><dd class="opt">${escT(p.fmt)}</dd><dt class="opt">Year</dt><dd class="opt">${escT(p.year)}</dd></dl>
-  <p class="note">${escT(p.note)}</p>`;
+  <p class="note">${escT(p.note)}</p>${p.yt?`<a class="yt-link" href="https://www.youtube.com/watch?v=${encodeURIComponent(p.yt)}" target="_blank" rel="noopener">Watch the full episode on YouTube &#8599;</a>`:''}`;
 }
 function setActive(i){if(i===active)return;const prev=active;active=i;
   monEls.forEach((el,k)=>el.classList.toggle('on',k===i));
   $$('.clip.v1',tlTrack).forEach(c=>c.classList.toggle('active',+c.dataset.i===i));
   const pv=prev>=0&&monEls[prev].querySelector('video');if(pv)pv.pause();
+  if(prev>=0&&monEls[prev].querySelector('iframe')&&P[prev].yt)monYt(monEls[prev],P[prev],prev);
   const v=monEls[i].querySelector('video');if(v){if(v.preload==='none'){v.preload='auto';v.load()}if(editVisible&&!scrubbing)v.play().catch(()=>{})}
   // warm next
   const n=monEls[i+1]&&monEls[i+1].querySelector('video');if(n&&n.preload==='none'){n.preload='auto';n.load()}
