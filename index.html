@@ -73,7 +73,7 @@ h1,h2,h3{margin:0;font-weight:800;text-wrap:balance}
 .sheet{position:fixed;inset:0;z-index:79;background:rgba(11,10,9,.96);display:flex;flex-direction:column;justify-content:center;padding:calc(var(--nav-h) + env(safe-area-inset-top,0px) + 12px) var(--gutter) 40px;gap:4px}
 .sheet a{font-family:var(--f-display);font-weight:900;font-size:clamp(2.6rem,12vw,4.5rem);text-transform:uppercase;text-decoration:none;line-height:1.02}
 .sheet a span{font-family:var(--f-mono);font-size:12px;color:var(--tungsten);vertical-align:top;margin-right:10px;letter-spacing:.1em}
-@media (max-width:900px){.nav-links{display:none}.menu-btn{display:inline-flex}.nav-rec{margin-left:0}}
+@media (max-width:1099px){.nav-links{display:none}.menu-btn{display:inline-flex}.nav-rec{margin-left:0}}
 @media (max-width:480px){.nav-in{gap:10px}.nav-rec{margin-left:auto;font-size:11px;padding:5px 7px;gap:6px}.nav-rec .tc-long{display:none}.brand{font-size:17px;letter-spacing:.08em;padding:6px 10px}.menu-btn{margin-left:0;padding:7px 12px;font-size:13px}}
 
 /* hero */
@@ -304,6 +304,25 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .lightbox figcaption{font-size:14px;color:var(--ash);text-align:center}
 .lightbox figcaption b{color:var(--bone);font-weight:600}
 .lb-close{position:absolute;top:calc(env(safe-area-inset-top,0px) + 14px);right:var(--gutter)}
+/* BTS contact sheet */
+.onset{padding-top:clamp(90px,12vw,160px);border-top:1px solid var(--line)}
+.cs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(16px,2vw,28px) clamp(8px,1.1vw,16px)}
+.fr{margin:0;display:grid;gap:9px;align-content:start}
+.fr a{position:relative;display:block;aspect-ratio:4/3;border-radius:4px;overflow:hidden;background:var(--panel);cursor:zoom-in}
+.fr img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s var(--ease)}
+.fr a:hover img,.fr a:focus-visible img{transform:scale(1.04)}
+.fr a:focus-visible{outline:2px solid var(--tungsten);outline-offset:3px}
+.fr .n{position:absolute;left:0;top:0;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;color:var(--tungsten);background:rgba(11,10,9,.8);padding:4px 7px;border-bottom-right-radius:4px}
+.fr figcaption{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;line-height:1.4;color:var(--bone)}
+.fr figcaption b{font-weight:400}
+.fr figcaption span{display:block;color:var(--ash)}
+.cs:not(.open) .fr:nth-child(n+11){display:none}
+.cs-more{display:flex;justify-content:center;margin-top:clamp(24px,3vw,40px)}
+.lb-nav{display:flex;gap:10px;justify-content:center}
+.lb-nav .btn{padding:10px 20px;font-size:16px;line-height:1}
+@media (max-width:1100px){.cs{grid-template-columns:repeat(4,minmax(0,1fr))}.cs:not(.open) .fr:nth-child(n+9){display:none}}
+@media (max-width:700px){.cs{grid-template-columns:repeat(2,minmax(0,1fr))}.cs:not(.open) .fr:nth-child(n+7){display:none}.fr figcaption{font-size:10.5px}}
+@media (prefers-reduced-motion:reduce){.fr img{transition:none}.fr a:hover img{transform:none}}
 
 /* services */
 .services{padding-block:clamp(90px,12vw,160px)}
@@ -670,7 +689,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   <div class="nav-in">
     <a class="brand" href="#top" aria-label="Anas Alkarmi, back to top">ANAS <b>&nbsp;ALKARMI</b></a>
     <nav class="nav-links" aria-label="Sections">
-      <a href="#showreel">Reel</a><a href="#pd">Interviews</a><a href="#work">Work</a><a href="#grade">Grade</a><a href="#design">Design</a><a href="#services">Services</a><a href="#contact">Contact</a><a href="#set">Set</a>
+      <a href="#showreel">Reel</a><a href="#pd">Interviews</a><a href="#work">Work</a><a href="#grade">Grade</a><a href="#design">Design</a><a href="#bts">BTS</a><a href="#services">Services</a><a href="#contact">Contact</a><a href="#set">Set</a>
     </nav>
     <div class="nav-rec" aria-label="Page timecode"><i></i><span class="tc-long">REC&nbsp;</span><span id="navTc">01:00:00:00</span></div>
     <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="sheet">Menu</button>
@@ -678,7 +697,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   <div class="kelvin-bar" id="kbar"></div>
 </header>
 <div class="sheet" id="sheet" hidden>
-  <a href="#showreel"><span>01</span>Reel</a><a href="#pd"><span>02</span>Interviews</a><a href="#work"><span>03</span>Work</a><a href="#grade"><span>04</span>Grade</a><a href="#design"><span>05</span>Design</a><a href="#services"><span>06</span>Services</a><a href="#kit"><span>07</span>Kit</a><a href="#contact"><span>08</span>Contact</a><a href="#set"><span>09</span>Set</a>
+  <a href="#showreel"><span>01</span>Reel</a><a href="#pd"><span>02</span>Interviews</a><a href="#work"><span>03</span>Work</a><a href="#grade"><span>04</span>Grade</a><a href="#design"><span>05</span>Design</a><a href="#bts"><span>06</span>BTS</a><a href="#services"><span>07</span>Services</a><a href="#kit"><span>08</span>Kit</a><a href="#contact"><span>09</span>Contact</a><a href="#set"><span>10</span>Set</a>
 </div>
 
 <main id="top">
@@ -896,6 +915,72 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   <div class="wall" id="wall" aria-label="Design work, draggable">
     <div class="plane" id="plane"></div>
     <span class="wall-hint" id="wallHint">Drag to explore</span>
+  </div>
+</section>
+
+<!-- BEHIND THE SCENES -->
+<section class="onset" id="bts" aria-labelledby="btsH">
+  <div class="wrap">
+    <div class="grade-top">
+      <div>
+        <div class="eyebrow"><span class="tc">01:03:38:00</span><span class="bar"></span><span>On set</span></div>
+        <h2 class="h-sec rf" id="btsH" style="margin-top:14px">Behind the <em>scenes</em></h2>
+        <p class="lede">Fifty frames from the last eight years of shoots: studios, living rooms, event halls, a boat in the mangroves and a courtroom set. Tap a frame to open it.</p>
+      </div>
+    </div>
+    <div class="cs" id="cs">
+      <figure class="fr"><a href="m/bts_5777.jpg" data-noedit><img src="m/bts_5777_t.jpg" alt="Behind the scenes: Lounge set, monitor bank, Sep 2026" width="640" height="480" loading="lazy" decoding="async"><span class="n">01</span></a><figcaption><b>Lounge set, monitor bank</b><span>Sep 2026</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_4623.jpg" data-noedit><img src="m/bts_4623_t.jpg" alt="Behind the scenes: Armchair studio, three cameras, Jul 2026" width="640" height="480" loading="lazy" decoding="async"><span class="n">02</span></a><figcaption><b>Armchair studio, three cameras</b><span>Jul 2026</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_4181.jpg" data-noedit><img src="m/bts_4181_t.jpg" alt="Behind the scenes: Al Muqabala, Ljubljana, Jun 2026" width="640" height="480" loading="lazy" decoding="async"><span class="n">03</span></a><figcaption><b>Al Muqabala, Ljubljana</b><span>Jun 2026</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_4007.jpg" data-noedit><img src="m/bts_4007_t.jpg" alt="Behind the scenes: TV studio, round stage, Jun 2026" width="640" height="480" loading="lazy" decoding="async"><span class="n">04</span></a><figcaption><b>TV studio, round stage</b><span>Jun 2026</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_3987.jpg" data-noedit><img src="m/bts_3987_t.jpg" alt="Behind the scenes: Hall event, long lens, Jun 2026" width="640" height="480" loading="lazy" decoding="async"><span class="n">05</span></a><figcaption><b>Hall event, long lens</b><span>Jun 2026</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_3277.jpg" data-noedit><img src="m/bts_3277_t.jpg" alt="Behind the scenes: Podcast studio, four cameras, Apr 2026" width="640" height="480" loading="lazy" decoding="async"><span class="n">06</span></a><figcaption><b>Podcast studio, four cameras</b><span>Apr 2026</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_2137.jpg" data-noedit><img src="m/bts_2137_t.jpg" alt="Behind the scenes: Gala dinner coverage, Feb 2026" width="640" height="480" loading="lazy" decoding="async"><span class="n">07</span></a><figcaption><b>Gala dinner coverage</b><span>Feb 2026</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_1807.jpg" data-noedit><img src="m/bts_1807_t.jpg" alt="Behind the scenes: Boat and mangroves, Feb 2026" width="640" height="480" loading="lazy" decoding="async"><span class="n">08</span></a><figcaption><b>Boat and mangroves</b><span>Feb 2026</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_1327.jpg" data-noedit><img src="m/bts_1327_t.jpg" alt="Behind the scenes: Radio desk, Jan 2026" width="640" height="480" loading="lazy" decoding="async"><span class="n">09</span></a><figcaption><b>Radio desk</b><span>Jan 2026</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_1277.jpg" data-noedit><img src="m/bts_1277_t.jpg" alt="Behind the scenes: Dark studio, Jan 2026" width="640" height="480" loading="lazy" decoding="async"><span class="n">10</span></a><figcaption><b>Dark studio</b><span>Jan 2026</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_0917.jpg" data-noedit><img src="m/bts_0917_t.jpg" alt="Behind the scenes: Theatre show, Dec 2025" width="640" height="480" loading="lazy" decoding="async"><span class="n">11</span></a><figcaption><b>Theatre show</b><span>Dec 2025</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_0336.jpg" data-noedit><img src="m/bts_0336_t.jpg" alt="Behind the scenes: Food tabletop, Oct 2025" width="640" height="480" loading="lazy" decoding="async"><span class="n">12</span></a><figcaption><b>Food tabletop</b><span>Oct 2025</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_0267.jpg" data-noedit><img src="m/bts_0267_t.jpg" alt="Behind the scenes: Sitting-room interview, Oct 2025" width="640" height="480" loading="lazy" decoding="async"><span class="n">13</span></a><figcaption><b>Sitting-room interview</b><span>Oct 2025</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_0117.jpg" data-noedit><img src="m/bts_0117_t.jpg" alt="Behind the scenes: Study interview, Oct 2025" width="640" height="480" loading="lazy" decoding="async"><span class="n">14</span></a><figcaption><b>Study interview</b><span>Oct 2025</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_4187-1.jpg" data-noedit><img src="m/bts_4187-1_t.jpg" alt="Behind the scenes: Round-table set, Sep 2025" width="640" height="480" loading="lazy" decoding="async"><span class="n">15</span></a><figcaption><b>Round-table set</b><span>Sep 2025</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_3667.jpg" data-noedit><img src="m/bts_3667_t.jpg" alt="Behind the scenes: Workshop, three feeds, Jul 2025" width="640" height="480" loading="lazy" decoding="async"><span class="n">16</span></a><figcaption><b>Workshop, three feeds</b><span>Jul 2025</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_3297-1.jpg" data-noedit><img src="m/bts_3297-1_t.jpg" alt="Behind the scenes: Tamer Almishal shoot, Jul 2025" width="640" height="480" loading="lazy" decoding="async"><span class="n">17</span></a><figcaption><b>Tamer Almishal shoot</b><span>Jul 2025</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_3299-1.jpg" data-noedit><img src="m/bts_3299-1_t.jpg" alt="Behind the scenes: Tamer Almishal shoot, wide, Jul 2025" width="640" height="480" loading="lazy" decoding="async"><span class="n">18</span></a><figcaption><b>Tamer Almishal shoot, wide</b><span>Jul 2025</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_3298-1.jpg" data-noedit><img src="m/bts_3298-1_t.jpg" alt="Behind the scenes: Tamer Almishal shoot, camera side, Jul 2025" width="640" height="480" loading="lazy" decoding="async"><span class="n">19</span></a><figcaption><b>Tamer Almishal shoot, camera side</b><span>Jul 2025</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_3293-1.jpg" data-noedit><img src="m/bts_3293-1_t.jpg" alt="Behind the scenes: Tamer Almishal shoot, first setup, Jul 2025" width="640" height="480" loading="lazy" decoding="async"><span class="n">20</span></a><figcaption><b>Tamer Almishal shoot, first setup</b><span>Jul 2025</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_3290-1.jpg" data-noedit><img src="m/bts_3290-1_t.jpg" alt="Behind the scenes: Charity convention, on the monitor, Jul 2025" width="640" height="480" loading="lazy" decoding="async"><span class="n">21</span></a><figcaption><b>Charity convention, on the monitor</b><span>Jul 2025</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_1937.jpg" data-noedit><img src="m/bts_1937_t.jpg" alt="Behind the scenes: Glass office interview, May 2025" width="640" height="480" loading="lazy" decoding="async"><span class="n">22</span></a><figcaption><b>Glass office interview</b><span>May 2025</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_1067-1.jpg" data-noedit><img src="m/bts_1067-1_t.jpg" alt="Behind the scenes: High-rise lounge, Apr 2025" width="640" height="480" loading="lazy" decoding="async"><span class="n">23</span></a><figcaption><b>High-rise lounge</b><span>Apr 2025</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_0177-1.jpg" data-noedit><img src="m/bts_0177-1_t.jpg" alt="Behind the scenes: House interview, Apr 2025" width="640" height="480" loading="lazy" decoding="async"><span class="n">24</span></a><figcaption><b>House interview</b><span>Apr 2025</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_8457.jpg" data-noedit><img src="m/bts_8457_t.jpg" alt="Behind the scenes: Two-presenter desk, on the monitor, Jan 2025" width="640" height="480" loading="lazy" decoding="async"><span class="n">25</span></a><figcaption><b>Two-presenter desk, on the monitor</b><span>Jan 2025</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_8017.jpg" data-noedit><img src="m/bts_8017_t.jpg" alt="Behind the scenes: Panel event, Nov 2024" width="640" height="480" loading="lazy" decoding="async"><span class="n">26</span></a><figcaption><b>Panel event</b><span>Nov 2024</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_7887.jpg" data-noedit><img src="m/bts_7887_t.jpg" alt="Behind the scenes: Blue briefing room, Nov 2024" width="640" height="480" loading="lazy" decoding="async"><span class="n">27</span></a><figcaption><b>Blue briefing room</b><span>Nov 2024</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_7867.jpg" data-noedit><img src="m/bts_7867_t.jpg" alt="Behind the scenes: Loft, low light, Nov 2024" width="640" height="480" loading="lazy" decoding="async"><span class="n">28</span></a><figcaption><b>Loft, low light</b><span>Nov 2024</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_7677.jpg" data-noedit><img src="m/bts_7677_t.jpg" alt="Behind the scenes: Wood-panelled room, Nov 2024" width="640" height="480" loading="lazy" decoding="async"><span class="n">29</span></a><figcaption><b>Wood-panelled room</b><span>Nov 2024</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_7247.jpg" data-noedit><img src="m/bts_7247_t.jpg" alt="Behind the scenes: Club room, Oct 2024" width="640" height="480" loading="lazy" decoding="async"><span class="n">30</span></a><figcaption><b>Club room</b><span>Oct 2024</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_6927.jpg" data-noedit><img src="m/bts_6927_t.jpg" alt="Behind the scenes: Library set, Oct 2024" width="640" height="480" loading="lazy" decoding="async"><span class="n">31</span></a><figcaption><b>Library set</b><span>Oct 2024</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_6807.jpg" data-noedit><img src="m/bts_6807_t.jpg" alt="Behind the scenes: Dark studio two-shot, Sep 2024" width="640" height="480" loading="lazy" decoding="async"><span class="n">32</span></a><figcaption><b>Dark studio two-shot</b><span>Sep 2024</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_6417.jpg" data-noedit><img src="m/bts_6417_t.jpg" alt="Behind the scenes: Living room, Aug 2024" width="640" height="480" loading="lazy" decoding="async"><span class="n">33</span></a><figcaption><b>Living room</b><span>Aug 2024</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_6357.jpg" data-noedit><img src="m/bts_6357_t.jpg" alt="Behind the scenes: White room, on the monitor, Aug 2024" width="640" height="480" loading="lazy" decoding="async"><span class="n">34</span></a><figcaption><b>White room, on the monitor</b><span>Aug 2024</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_6267.jpg" data-noedit><img src="m/bts_6267_t.jpg" alt="Behind the scenes: Loft apartment, Aug 2024" width="640" height="480" loading="lazy" decoding="async"><span class="n">35</span></a><figcaption><b>Loft apartment</b><span>Aug 2024</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_5077.jpg" data-noedit><img src="m/bts_5077_t.jpg" alt="Behind the scenes: Under the flyover, Jul 2024" width="640" height="480" loading="lazy" decoding="async"><span class="n">36</span></a><figcaption><b>Under the flyover</b><span>Jul 2024</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_4887-1.jpg" data-noedit><img src="m/bts_4887-1_t.jpg" alt="Behind the scenes: Neon podcast studio, Jun 2024" width="640" height="480" loading="lazy" decoding="async"><span class="n">37</span></a><figcaption><b>Neon podcast studio</b><span>Jun 2024</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_4877.jpg" data-noedit><img src="m/bts_4877_t.jpg" alt="Behind the scenes: Skyline studio, Jun 2024" width="640" height="480" loading="lazy" decoding="async"><span class="n">38</span></a><figcaption><b>Skyline studio</b><span>Jun 2024</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_2907-1.jpg" data-noedit><img src="m/bts_2907-1_t.jpg" alt="Behind the scenes: Black studio, single guest, Mar 2024" width="640" height="480" loading="lazy" decoding="async"><span class="n">39</span></a><figcaption><b>Black studio, single guest</b><span>Mar 2024</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_2467-1.jpg" data-noedit><img src="m/bts_2467-1_t.jpg" alt="Behind the scenes: Broadcaster&#x27;s lounge, Mar 2024" width="640" height="480" loading="lazy" decoding="async"><span class="n">40</span></a><figcaption><b>Broadcaster&#x27;s lounge</b><span>Mar 2024</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_8397-1.jpg" data-noedit><img src="m/bts_8397-1_t.jpg" alt="Behind the scenes: Office lobby interview, Sep 2023" width="640" height="480" loading="lazy" decoding="async"><span class="n">41</span></a><figcaption><b>Office lobby interview</b><span>Sep 2023</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_4867-1.jpg" data-noedit><img src="m/bts_4867-1_t.jpg" alt="Behind the scenes: Live vision mixing, May 2023" width="640" height="480" loading="lazy" decoding="async"><span class="n">42</span></a><figcaption><b>Live vision mixing</b><span>May 2023</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_0717.jpg" data-noedit><img src="m/bts_0717_t.jpg" alt="Behind the scenes: House documentary, Nov 2022" width="640" height="480" loading="lazy" decoding="async"><span class="n">43</span></a><figcaption><b>House documentary</b><span>Nov 2022</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_6737-1.jpg" data-noedit><img src="m/bts_6737-1_t.jpg" alt="Behind the scenes: Parliament Square, May 2022" width="640" height="480" loading="lazy" decoding="async"><span class="n">44</span></a><figcaption><b>Parliament Square</b><span>May 2022</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_5217-2.jpg" data-noedit><img src="m/bts_5217-2_t.jpg" alt="Behind the scenes: News studio, Jan 2022" width="640" height="480" loading="lazy" decoding="async"><span class="n">45</span></a><figcaption><b>News studio</b><span>Jan 2022</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_7477-2.jpg" data-noedit><img src="m/bts_7477-2_t.jpg" alt="Behind the scenes: Black-box studio, Nov 2019" width="640" height="480" loading="lazy" decoding="async"><span class="n">46</span></a><figcaption><b>Black-box studio</b><span>Nov 2019</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_3887-2.jpg" data-noedit><img src="m/bts_3887-2_t.jpg" alt="Behind the scenes: Cafe shoot, Apr 2019" width="640" height="480" loading="lazy" decoding="async"><span class="n">47</span></a><figcaption><b>Cafe shoot</b><span>Apr 2019</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_3647-2.jpg" data-noedit><img src="m/bts_3647-2_t.jpg" alt="Behind the scenes: Woodland location, Mar 2019" width="640" height="480" loading="lazy" decoding="async"><span class="n">48</span></a><figcaption><b>Woodland location</b><span>Mar 2019</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_0647-1.jpg" data-noedit><img src="m/bts_0647-1_t.jpg" alt="Behind the scenes: Courtroom drama set, Nov 2018" width="640" height="480" loading="lazy" decoding="async"><span class="n">49</span></a><figcaption><b>Courtroom drama set</b><span>Nov 2018</span></figcaption></figure>
+      <figure class="fr"><a href="m/bts_4437-2.jpg" data-noedit><img src="m/bts_4437-2_t.jpg" alt="Behind the scenes: Home-study interview, Jun 2018" width="640" height="480" loading="lazy" decoding="async"><span class="n">50</span></a><figcaption><b>Home-study interview</b><span>Jun 2018</span></figcaption></figure>
+    </div>
+    <div class="cs-more"><button class="btn" id="csMore" type="button" aria-expanded="false" aria-controls="cs">Show all 50 frames</button></div>
   </div>
 </section>
 
@@ -1171,7 +1256,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   <button class="btn" id="rewind" aria-label="Rewind to top"><svg viewBox="0 0 14 14" fill="currentColor"><path d="M7 2 1 7l6 5V2zm6 0L7 7l6 5V2z"/></svg> Rewind</button>
 </footer>
 
-<div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Design preview">
+<div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Preview">
   <button class="btn lb-close" id="lbClose">Close</button>
   <figure id="lbFig"></figure>
 </div>
@@ -1584,9 +1669,24 @@ let rzT;addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(()=>{bui
 const lb=$('#lightbox'),lbFig=$('#lbFig');
 function openLB(t){lbFig.innerHTML=(t.vid?`<video src="${t.vid}" muted playsinline autoplay loop controls></video>`:`<img src="${t.src}" alt="${t.k}: ${t.c}">`)+`<figcaption><b>${t.k}</b> · ${t.c}</figcaption>`;lb.hidden=false;$('#lbClose').focus()}
 window.__openLB=openLB;
-function closeLB(){lb.hidden=true;lbFig.innerHTML=''}
+let btsCur=-1;
+function closeLB(){lb.hidden=true;lbFig.innerHTML='';btsCur=-1}
 $('#lbClose').addEventListener('click',closeLB);lb.addEventListener('click',e=>{if(e.target===lb)closeLB()});addEventListener('keydown',e=>{if(e.key==='Escape'&&!lb.hidden)closeLB()});
 
+
+/* ---------- BTS contact sheet ---------- */
+(function(){const cs=$('#cs'),more=$('#csMore');if(!cs)return;const frs=$$('.fr',cs),pad=n=>String(n).padStart(2,'0');
+  function show(i){btsCur=(i+frs.length)%frs.length;const f=frs[btsCur],cap=$('figcaption',f),b=$('b',cap),d=$('span',cap);
+    const t=(b||cap).textContent.trim(),dt=d?d.textContent.trim():'';
+    lbFig.innerHTML=`<img src="${$('a',f).getAttribute('href')}" alt="${escT($('img',f).alt)}"><figcaption><b>${pad(btsCur+1)} / ${frs.length}</b> · ${escT(t)}${dt?' · '+escT(dt):''}</figcaption><div class="lb-nav"><button class="btn" type="button" data-d="-1" aria-label="Previous frame">←</button><button class="btn" type="button" data-d="1" aria-label="Next frame">→</button></div>`;
+    lb.hidden=false;const nx=frs[(btsCur+1)%frs.length];new Image().src=$('a',nx).getAttribute('href')}
+  cs.addEventListener('click',e=>{const a=e.target.closest('.fr a');if(!a)return;e.preventDefault();show(frs.indexOf(a.parentNode));$('#lbClose').focus()});
+  lbFig.addEventListener('click',e=>{const b=e.target.closest('[data-d]');if(b){const d=+b.dataset.d;show(btsCur+d);const nb=$(`[data-d="${d}"]`,lbFig);nb&&nb.focus()}});
+  addEventListener('keydown',e=>{if(lb.hidden||btsCur<0)return;if(e.key==='ArrowRight')show(btsCur+1);else if(e.key==='ArrowLeft')show(btsCur-1)});
+  let sx=null;lb.addEventListener('touchstart',e=>{sx=btsCur<0?null:e.touches[0].clientX},{passive:true});
+  lb.addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;sx=null;if(Math.abs(dx)>50)show(btsCur+(dx<0?1:-1))});
+  if(more)more.addEventListener('click',()=>{const o=cs.classList.toggle('open');more.setAttribute('aria-expanded',o);more.textContent=o?'Show fewer':'Show all '+frs.length+' frames';if(!o)$('#bts').scrollIntoView({block:'start'})});
+})();
 
 /* ---------- auto-play small loops ---------- */
 $$('video[data-auto]').forEach(v=>watch(v,on=>{if(on){v.preload='auto';v.play().catch(()=>{})}else v.pause()}));
