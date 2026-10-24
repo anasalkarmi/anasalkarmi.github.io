@@ -49,9 +49,6 @@ h1,h2,h3{margin:0;font-weight:800;text-wrap:balance}
 .lede{font-size:clamp(1.05rem,1.4vw,1.25rem);color:var(--ash);max-width:60ch}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* grain */
-.grain{position:fixed;inset:-50%;z-index:90;pointer-events:none;opacity:.07;background-size:180px 180px;animation:grain 1s steps(6) infinite}
-@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-7%,4%)}40%{transform:translate(5%,-6%)}60%{transform:translate(-3%,8%)}80%{transform:translate(8%,2%)}100%{transform:translate(0,0)}}
 
 /* nav */
 .nav{position:fixed;top:0;left:0;right:0;z-index:80;padding-top:env(safe-area-inset-top,0px);transition:background .4s,backdrop-filter .4s,border-color .4s;border-bottom:1px solid transparent}
@@ -675,14 +672,12 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 
 @media (prefers-reduced-motion:reduce){
   .hero-media{animation:none}
-  .grain{animation:none}
   .rf.pre{filter:none;opacity:1;transform:none}
   .meta.swap > *{animation:none}
   *{scroll-behavior:auto!important}
 }
 </style>
 
-<div class="grain" id="grain" aria-hidden="true"></div>
 <div class="ctag" id="ctag" aria-hidden="true">Drag</div>
 
 <header class="nav" id="nav">
@@ -1276,8 +1271,6 @@ const vis=new Map();
 const io=new IntersectionObserver(es=>es.forEach(e=>{vis.set(e.target,e.isIntersecting);const cb=e.target.__vis;cb&&cb(e.isIntersecting)}),{rootMargin:'120px 0px'});
 const watch=(el,cb)=>{el.__vis=cb;io.observe(el)};
 
-/* ---------- film grain ---------- */
-(()=>{const c=document.createElement('canvas');c.width=c.height=180;const x=c.getContext('2d');const d=x.createImageData(180,180);for(let i=0;i<d.data.length;i+=4){const v=Math.random()*255|0;d.data[i]=d.data[i+1]=d.data[i+2]=v;d.data[i+3]=255}x.putImageData(d,0,0);$('#grain').style.backgroundImage=`url(${c.toDataURL()})`})();
 
 /* ---------- nav ---------- */
 const nav=$('#nav'), kbar=$('#kbar'), navTc=$('#navTc');
@@ -1327,18 +1320,17 @@ const COMMON=`
 float luma(vec3 c){return dot(c,vec3(.2126,.7152,.0722));}
 vec3 logify(vec3 c){float l=luma(c);c=mix(vec3(l),c,.52);return c*.6+.16+.06*(1.-c);}
 vec2 cover(vec2 uv,vec2 res,vec2 vid){float ra=res.x/res.y,rv=vid.x/vid.y;vec2 s=ra>rv?vec2(1.,rv/ra):vec2(ra/rv,1.);return (uv-.5)*s+.5;}
-float hash(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}
 `;
 
 /* ---------- HERO ---------- */
 const hero=$('#hero'), hv=$('#heroVid'), hc=$('#heroGl'), heroTc=$('#heroTc'), splitTag=$('#splitTag');
 let split=.4, splitT=.4, userSplit=false, lastUser=0, heroVisible=true;
-const HFS=`precision mediump float;varying vec2 v;uniform sampler2D t;uniform vec2 res,vid;uniform float sp,time;${COMMON}
+const HFS=`precision mediump float;varying vec2 v;uniform sampler2D t;uniform vec2 res,vid;uniform float sp;${COMMON}
 vec3 grade(vec3 c){float l=luma(c);c=mix(c,c*vec3(1.05,1.0,.93),smoothstep(.45,1.,l));c=mix(c,c*vec3(.93,1.0,1.07),1.-smoothstep(.0,.42,l));c=(c-.42)*1.07+.42;return c;}
 void main(){vec2 uv=cover(v,res,vid);uv.y=1.-uv.y;vec2 d=v-.5;float r2=dot(d,d);
 vec2 ca=d*.0035*r2*4.;vec3 c=vec3(texture2D(t,uv+ca).r,texture2D(t,uv).g,texture2D(t,uv-ca).b);
 vec3 col=v.x<sp?logify(c):grade(c);
-col*=1.-r2*.85;col+=(hash(v*res+fract(time)*91.7)-.5)*.055;
+col*=1.-r2*.85;
 float px=1./res.x;float line=1.-smoothstep(0.,1.6*px,abs(v.x-sp));col=mix(col,vec3(1.,.78,.5),line*.85);
 gl_FragColor=vec4(col,1.);}`;
 const hg=makeGL(hc,HFS);
@@ -1365,7 +1357,7 @@ function heroLoop(t){
   if(!hg)return;
   const gl=hg.gl;const [w,h]=fit(hc,1.5);gl.viewport(0,0,w,h);
   if(!upload(hg,hv))return;
-  gl.uniform2f(hg.U.res,w,h);gl.uniform2f(hg.U.vid,hv.videoWidth||1280,hv.videoHeight||720);gl.uniform1f(hg.U.sp,split);gl.uniform1f(hg.U.time,now/1000);
+  gl.uniform2f(hg.U.res,w,h);gl.uniform2f(hg.U.vid,hv.videoWidth||1280,hv.videoHeight||720);gl.uniform1f(hg.U.sp,split);
   gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
 }
 requestAnimationFrame(heroLoop);
