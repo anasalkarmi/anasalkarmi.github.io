@@ -107,6 +107,8 @@ h1,h2,h3{margin:0;font-weight:800;text-wrap:balance}
 .split-lab{position:absolute;top:calc(30% + 34px);font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;padding:4px 8px;border-radius:4px;background:rgba(11,10,9,.6);white-space:nowrap;pointer-events:none}
 .split-lab.l{right:calc((1 - var(--split,.4)) * 100% + 30px);color:var(--ash)}
 .split-lab.r{left:calc(var(--split,.4) * 100% + 30px);color:var(--tungsten-2)}
+.hero.filmed-showcase{cursor:default}
+.hero.filmed-showcase .split-tag,.hero.filmed-showcase .split-lab,.hero.filmed-showcase .hero-grade-hint{display:none}
 .hero-copy{position:absolute;left:0;right:0;bottom:0;padding:0 var(--gutter) clamp(28px,5vh,56px);display:grid;grid-template-columns:1fr auto;align-items:end;gap:24px;pointer-events:none}
 .hero-name{font-family:var(--f-display);font-weight:900;text-transform:uppercase;font-size:clamp(3.6rem,min(15.5vw,27svh),15rem);line-height:.8;letter-spacing:-.005em;margin:0}
 .hero-name span{display:block}
@@ -697,9 +699,9 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 
 <main id="top">
 <!-- HERO -->
-<section class="hero" id="hero" aria-label="Intro">
+<section class="hero filmed-showcase" id="hero" aria-label="Intro">
   <div class="hero-media">
-    <video id="heroVid" src="m/reel_v10.mp4" poster="m/reel_v10.jpg" muted playsinline autoplay loop preload="auto" aria-hidden="true"></video>
+    <video id="heroVid" src="m/header-showcase-2026-10.mp4" poster="m/header-showcase-2026-10.jpg" data-reel="showcase" muted playsinline autoplay preload="auto" aria-hidden="true"></video>
     <canvas id="heroGl" aria-hidden="true"></canvas>
   </div>
   <div class="hero-scrim"></div>
@@ -729,7 +731,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
       <p class="hero-roles"><span>Senior DoP &amp; director</span><span>Creative &amp; technical lead</span><span>English &amp; Arabic</span></p>
     </div>
     <div class="hero-side">
-      <p>London-based senior DoP and director with 17 years in Arabic and English broadcast, including Al Jazeera's Al Muqabala with Ali Al-Dhafiri. I light and shoot high-profile interviews, design and run multi-camera studios and galleries, and lead crews from concept to delivery. Sweep across the footage to compare the flat log with the finished grade.</p>
+      <p>London-based senior DoP and director with 17 years in Arabic and English broadcast, including Al Jazeera's Al Muqabala with Ali Al-Dhafiri. I light and shoot high-profile interviews, design and run multi-camera studios and galleries, and lead crews from concept to delivery.<span class="hero-grade-hint"> Sweep across the footage to compare the flat log with the finished grade.</span></p>
       <div class="btns"><a class="btn hot" href="#showreel">Watch the showreel <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 1v12M2 8l5 5 5-5"/></svg></a><a class="btn" href="#contact">Get in touch</a></div>
     </div>
   </div>
@@ -1325,9 +1327,38 @@ vec2 cover(vec2 uv,vec2 res,vec2 vid){float ra=res.x/res.y,rv=vid.x/vid.y;vec2 s
 /* ---------- HERO ---------- */
 const hero=$('#hero'), hv=$('#heroVid'), hc=$('#heroGl'), heroTc=$('#heroTc'), splitTag=$('#splitTag');
 let split=.4, splitT=.4, userSplit=false, lastUser=0, heroVisible=true;
-const HFS=`precision mediump float;varying vec2 v;uniform sampler2D t;uniform vec2 res,vid;uniform float sp;${COMMON}
+// Play the new filmed showcase alongside the existing header reel.
+const heroReels=[
+  {id:'showcase',src:'m/header-showcase-2026-10.mp4',poster:'m/header-showcase-2026-10.jpg'},
+  {id:'original',src:'m/reel_v10.mp4',poster:'m/reel_v10.jpg'}
+];
+let heroReelIndex=0;
+// End times and horizontal framing positions for the prepared showcase's 12 shots.
+const heroShotFocus=[[3.2,.05],[5.6,.65],[8,.30],[10.4,.55],[12.8,.44],[14.8,.5],[17.2,.56],[19.6,.5],[22.8,.5],[25.2,.42],[27.6,.71],[30,.36]];
+const failedHeroReels=new Set();
+function advanceHeroReel(){
+  for(let step=1;step<=heroReels.length;step++){
+    const next=(heroReelIndex+step)%heroReels.length;
+    if(failedHeroReels.has(next))continue;
+    heroReelIndex=next;
+    const reel=heroReels[next];
+    hv.dataset.reel=reel.id;hv.poster=reel.poster;hv.src=reel.src;
+    hero.classList.toggle('filmed-showcase',reel.id==='showcase');
+    hero.dataset.tag=reel.id==='showcase'?'Filmed showcase':'Drag to grade';
+    if(hero.matches(':hover'))ctag.textContent=hero.dataset.tag;
+    hv.load();
+    if(heroVisible&&!document.hidden)hv.play().catch(()=>{});
+    return;
+  }
+}
+hv.addEventListener('ended',advanceHeroReel);
+hv.addEventListener('error',()=>{failedHeroReels.add(heroReelIndex);advanceHeroReel()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)hv.pause();else if(heroVisible)hv.play().catch(()=>{})});
+hero.classList.add('filmed-showcase');
+const HFS=`precision mediump float;varying vec2 v;uniform sampler2D t;uniform vec2 res,vid;uniform float sp,finished,focus;${COMMON}
 vec3 grade(vec3 c){float l=luma(c);c=mix(c,c*vec3(1.05,1.0,.93),smoothstep(.45,1.,l));c=mix(c,c*vec3(.93,1.0,1.07),1.-smoothstep(.0,.42,l));c=(c-.42)*1.07+.42;return c;}
 void main(){vec2 uv=cover(v,res,vid);uv.y=1.-uv.y;vec2 d=v-.5;float r2=dot(d,d);
+if(finished>.5){float crop=min(1.,(res.x/res.y)/(vid.x/vid.y));uv.x+=(focus-.5)*(1.-crop);gl_FragColor=vec4(texture2D(t,uv).rgb,1.);return;}
 vec2 ca=d*.0035*r2*4.;vec3 c=vec3(texture2D(t,uv+ca).r,texture2D(t,uv).g,texture2D(t,uv-ca).b);
 vec3 col=v.x<sp?logify(c):grade(c);
 col*=1.-r2*.85;
@@ -1342,7 +1373,7 @@ let hDrag=null;
 hero.addEventListener('pointerdown',e=>{if(e.target.closest('button,a'))return;hDrag={x:e.clientX,y:e.clientY,active:e.pointerType==='mouse'};if(e.pointerType==='mouse')setSplitFromX(e.clientX)});
 hero.addEventListener('pointermove',e=>{if(!hDrag||e.pointerType==='mouse')return;const dx=e.clientX-hDrag.x,dy=e.clientY-hDrag.y;if(!hDrag.active&&Math.abs(dx)>8&&Math.abs(dx)>Math.abs(dy))hDrag.active=true;if(hDrag.active)setSplitFromX(e.clientX)});
 addEventListener('pointerup',()=>hDrag=null);addEventListener('pointercancel',()=>hDrag=null);
-tagZone(hero,'Drag to grade');
+tagZone(hero,'Filmed showcase');
 $$('.frames button,.hero a').forEach(el=>{el.addEventListener('pointerenter',()=>ctag.classList.remove('on'));el.addEventListener('pointerleave',()=>{if(FINE&&hero.matches(':hover'))ctag.classList.add('on')})});
 const meters=$$('#meters i');
 function heroLoop(t){
@@ -1354,10 +1385,13 @@ function heroLoop(t){
   hero.style.setProperty('--split',split.toFixed(4));
   if(hv.readyState>=1)heroTc.textContent=tc(hv.currentTime,3600*0+0);
   if(!RM&&(t|0)%3===0)meters.forEach((m,i)=>m.style.setProperty('--v',(38+Math.random()*48-(i*6))+'%'));
+  // Keep the subject in view when a portrait screen crops the landscape footage.
+  const heroFocus=hv.dataset.reel==='showcase'&&hero.clientWidth/hero.clientHeight<1.2?(heroShotFocus.find(shot=>hv.currentTime<shot[0])||[30,.36])[1]:.5;
+  hv.style.objectPosition=(heroFocus*100)+'% 50%';
   if(!hg)return;
   const gl=hg.gl;const [w,h]=fit(hc,1.5);gl.viewport(0,0,w,h);
   if(!upload(hg,hv))return;
-  gl.uniform2f(hg.U.res,w,h);gl.uniform2f(hg.U.vid,hv.videoWidth||1280,hv.videoHeight||720);gl.uniform1f(hg.U.sp,split);
+  gl.uniform2f(hg.U.res,w,h);gl.uniform2f(hg.U.vid,hv.videoWidth||1280,hv.videoHeight||720);gl.uniform1f(hg.U.sp,split);gl.uniform1f(hg.U.finished,hv.dataset.reel==='showcase'?1:0);gl.uniform1f(hg.U.focus,heroFocus);
   gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
 }
 requestAnimationFrame(heroLoop);
@@ -1729,7 +1763,7 @@ $('#rewind').addEventListener('click',()=>scrollTo({top:0,behavior:RM?'auto':'sm
 })();
 
 // AI shot tag on the header reel: shown only while an AI-generated shot is on screen
-(()=>{const v=document.getElementById('heroVid'),t=document.getElementById('aiTag');if(!v||!t)return;const R=[[12.16,14.56],[21.56,23.96]];const f=()=>{const c=v.currentTime;t.classList.toggle('on',R.some(r=>c>=r[0]&&c<r[1]));requestAnimationFrame(f)};requestAnimationFrame(f)})();
+(()=>{const v=document.getElementById('heroVid'),t=document.getElementById('aiTag');if(!v||!t)return;const R=[[12.16,14.56],[21.56,23.96]];const f=()=>{const c=v.currentTime;t.classList.toggle('on',v.dataset.reel==='original'&&R.some(r=>c>=r[0]&&c<r[1]));requestAnimationFrame(f)};requestAnimationFrame(f)})();
 </script>
 <script src="set3d.js"></script>
 <script src="set_app.js"></script>
